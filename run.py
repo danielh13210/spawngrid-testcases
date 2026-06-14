@@ -41,19 +41,25 @@ except CalledProcessError:
 
 
 for testline in args.testfile.split(','):
-  testfile,expectfile=testline.split(':')
+  testfile,expectfile,repeats=testline.split(':')
+  times=[]
   print(f"testing {testfile}")
-  proc=subprocess.run(["./spawn_sim",testfile,"/dev/stderr"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-  time=proc.stdout.decode('utf-8')
-  time,unit=time.split()
-  if unit=='ms':
-    success("Unit is ms")
-  else:
-    fail("Wrong unit detected")
-  print(time,'ms')
-  out=proc.stderr
-  expect=open(expectfile,'rb').read()
-  if out==expect:
-    success("Output correct")
-  else:
-    fail("Output incorrect")
+  for i in range(int(repeats)):
+    print(f"Iteration {i+1}")
+    proc=subprocess.run(["./spawn_sim",testfile,"/dev/stderr"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    time=proc.stdout.decode('utf-8')
+    time,unit=time.split()
+    time=float(time)
+    if unit=='ms':
+      success("Unit is ms")
+    else:
+      fail("Wrong unit detected")
+    print(time,'ms')
+    out=proc.stderr
+    expect=open(expectfile,'rb').read()
+    if out==expect:
+      success("Output correct")
+    else:
+      fail("Output incorrect")
+    times.append(time)
+  print("Mean:",sum(times)/len(times))
