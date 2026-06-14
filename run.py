@@ -7,6 +7,7 @@ from testtools import success, fail
 
 parser=argparse.ArgumentParser(description="Run test cases for Spawn Grid Optimization Project")
 parser.add_argument('repo',help="Repository to test")
+parser.add_argument('testfile')
 parser.add_argument("--build",'-b',help="Path to build.sh (default: ./build.sh)",default="./build.sh")
 args=parser.parse_args()
 os.chdir(args.repo)
@@ -38,3 +39,21 @@ try:
 except CalledProcessError:
   fail("spawn_sim is not an ELF",fatal=True)
 
+
+for testline in args.testfile.split(','):
+  testfile,expectfile=testline.split(':')
+  print(f"testing {testfile}")
+  proc=subprocess.run(["./spawn_sim",testfile,"/dev/stderr"],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  time=proc.stdout.decode('utf-8')
+  time,unit=time.split()
+  if unit=='ms':
+    success("Unit is ms")
+  else:
+    fail("Wrong unit detected")
+  print(time,'ms')
+  out=proc.stderr
+  expect=open(expectfile,'rb').read()
+  if out==expect:
+    success("Output correct")
+  else:
+    fail("Output incorrect")
