@@ -3,6 +3,7 @@ import sys
 import os
 import subprocess
 from subprocess import CalledProcessError
+from testtools import success, fail
 
 parser=argparse.ArgumentParser(description="Run test cases for Spawn Grid Optimization Project")
 parser.add_argument('repo',help="Repository to test")
@@ -13,17 +14,13 @@ os.chdir(args.repo)
 print(f"Compiling program: run {args.build}")
 try:
   subprocess.run(['/bin/bash',args.build],check=True)
-  print("[SUCCESS] build successful")
+  success("build successful")
 except CalledProcessError:
-  print("[FAIL]    cannot build")
-  print("Tests terminated.")
-  sys.exit(1)
+  fail("cannot build",fatal=True)
 
 print(f"Generating maps: run {args.generate}")
 try:
   subprocess.run(['/usr/bin/python3',args.generate],check=True)
-  print("[SUCCESS] generate successful")
+  success("generate successful")
 except CalledProcessError:
-  print("[FAIL]    failed to generate maps")
-  print("Tests terminated.")
-  sys.exit(1)
+  fail("failed to generate maps",fatal=True)
