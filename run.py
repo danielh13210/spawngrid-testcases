@@ -8,7 +8,6 @@ from testtools import success, fail
 parser=argparse.ArgumentParser(description="Run test cases for Spawn Grid Optimization Project")
 parser.add_argument('repo',help="Repository to test")
 parser.add_argument("--build",'-b',help="Path to build.sh (default: ./build.sh)",default="./build.sh")
-parser.add_argument("--generate",'-g',help="Path to generate map script (default: ./test_grids/generate.py",default="./test_grids/generate.py")
 args=parser.parse_args()
 os.chdir(args.repo)
 print(f"Compiling program: run {args.build}")
