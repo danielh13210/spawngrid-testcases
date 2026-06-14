@@ -17,10 +17,3 @@ try:
   success("build successful")
 except CalledProcessError:
   fail("cannot build",fatal=True)
-
-print(f"Generating maps: run {args.generate}")
-try:
-  subprocess.run(['/usr/bin/python3',args.generate],check=True)
-  success("generate successful")
-except CalledProcessError:
-  fail("failed to generate maps",fatal=True)
